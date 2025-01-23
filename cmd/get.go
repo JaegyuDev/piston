@@ -20,6 +20,27 @@ If no path is given, the jar will be downloaded to the current directory.`,
     Run: func(cmd *cobra.Command, args []string) {
         version := args[0]
 
+        if version == "latest" {
+            versionManifest := mojang_piston.GetPistonMeta()
+            if len(versionManifest.Versions) == 0 {
+                fmt.Println("No versions available.")
+                return
+            }
+
+            var latestVersion *mojang_piston.Version
+            for _, v := range versionManifest.Versions {
+                if v.Type == "release" {
+                    latestVersion = &v
+                    break
+                }
+            }
+            if latestVersion == nil {
+                fmt.Println("No valid release versions found.")
+                return
+            }
+            version = latestVersion.ID
+        }
+
         outputPath, err := cmd.Flags().GetString("output")
         if err != nil {
             panic(err)
