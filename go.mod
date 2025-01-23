@@ -1,4 +1,4 @@
-module github.com/JaegyuDev/piston-cli
+module github.com/JaegyuDev/piston
 
 go 1.23.2
 

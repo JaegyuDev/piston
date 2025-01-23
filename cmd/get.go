@@ -2,7 +2,7 @@ package cmd
 
 import (
     "fmt"
-    "github.com/JaegyuDev/piston-cli/internal/mojang-piston"
+    "github.com/JaegyuDev/piston/internal/mojang-piston"
     "github.com/cheggaaa/pb/v3"
     "github.com/spf13/cobra"
     "io"
