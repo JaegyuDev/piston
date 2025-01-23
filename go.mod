@@ -1,6 +1,6 @@
 module github.com/JaegyuDev/piston
 
-go 1.23.2
+go 1.23
 
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
