@@ -1,6 +1,6 @@
-# Piston CLI Tool
+# Piston
 
-`piston` is a command-line utility for interacting with Mojang's Piston API. It allows you to list available Minecraft versions, download specific versions of the server jar, and manage snapshots.
+`piston` is a command-line utility for interacting with Mojang's Piston API. It allows you to list available Minecraft versions and download specific versions of the server jar - including snapshots.
 
 ## Features
 
@@ -10,7 +10,7 @@
 
 ## Installation
 
-To install the `piston` CLI tool, use the following command:
+To install `piston`, use the following command:
 
 ```
 go install github.com/JaegyuDev/piston@latest
