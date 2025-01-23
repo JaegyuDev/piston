@@ -29,5 +29,5 @@ func formatNormalizedOutput(v mojang_piston.Version) string {
 }
 
 func init() {
-    rootCmd.PersistentFlags().BoolP("allow-snapshots", "s", false, "Allow snapshots to be returned from the APIs. Doesn't affect __direct__ calls, like `get snapshot25w01a`.")
+    rootCmd.PersistentFlags().BoolP("allow-snapshots", "s", false, "Allow snapshots to be returned from the APIs. Doesn't affect __direct__ calls, like get [snapshot].")
 }
