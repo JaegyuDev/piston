@@ -44,7 +44,7 @@ type PistonData struct {
 func GetPistonData(url string) PistonData {
     resp, err := http.Get(url)
     if err != nil {
-        panic(err) // this shouldnt panic unless there isnt a connection.
+        panic(err) // this shouldn't panic unless there isn't a connection.
     }
     defer resp.Body.Close()
 

@@ -2,11 +2,8 @@ package cmd
 
 import (
     "fmt"
-    "github.com/JaegyuDev/piston/internal/mojang-piston"
-    "github.com/cheggaaa/pb/v3"
+    "github.com/JaegyuDev/piston/internal/caffine"
     "github.com/spf13/cobra"
-    "io"
-    "net/http"
     "os"
 )
 
@@ -20,83 +17,43 @@ If no path is given, the jar will be downloaded to the current directory.`,
     Run: func(cmd *cobra.Command, args []string) {
         version := args[0]
 
-        if version == "latest" {
-            versionManifest := mojang_piston.GetPistonMeta()
-            if len(versionManifest.Versions) == 0 {
-                fmt.Println("No versions available.")
-                return
-            }
-
-            var latestVersion *mojang_piston.Version
-            for _, v := range versionManifest.Versions {
-                if v.Type == "release" {
-                    latestVersion = &v
-                    break
-                }
-            }
-            if latestVersion == nil {
-                fmt.Println("No valid release versions found.")
-                return
-            }
-            version = latestVersion.ID
+        loader, err := cmd.Flags().GetString("loader")
+        if err != nil {
+            fmt.Println("Error getting loader parameter:", err)
+            os.Exit(1)
         }
+
+        downloader, err := caffine.GetLoader(loader)
+        if err != nil {
+            fmt.Println("Error getting loader: ", err)
+            os.Exit(1)
+        }
+        downloader.Version(version)
 
         outputPath, err := cmd.Flags().GetString("output")
         if err != nil {
-            panic(err)
+            fmt.Println("Error getting output path: ", err)
+            os.Exit(1)
         }
+        downloader.Path(outputPath)
 
-        versionManifest := mojang_piston.GetPistonMeta()
-        var versionDataURL string
-        for _, v := range versionManifest.Versions {
-            if v.ID == version {
-                versionDataURL = v.URL
-                break
-            }
-        }
-
-        if versionDataURL == "" {
-            fmt.Printf("Version '%s' not found.\n", version)
-            return
-        }
-
-        pistonData := mojang_piston.GetPistonData(versionDataURL)
-        serverJarURL := pistonData.Downloads.Server.URL
-
-        if serverJarURL == "" {
-            fmt.Printf("No server jar available for version '%s'.\n", version)
-            return
-        }
-
-        resp, err := http.Get(serverJarURL)
+        doSnapshots, err := cmd.Flags().GetBool("allow-snapshots")
         if err != nil {
-            panic(err)
+            fmt.Println("Error getting allow-snapshots: ", err)
+            os.Exit(1)
         }
-        defer resp.Body.Close()
+        downloader.DoSnapshots(doSnapshots)
 
-        jarFilePath := fmt.Sprintf("%s/server.jar", outputPath)
-        file, err := os.Create(jarFilePath)
+        err = downloader.Do()
         if err != nil {
-            panic(err)
+            fmt.Println("Error downloading: ", err)
+            os.Exit(1)
         }
-        defer file.Close()
-
-        bar := pb.StartNew(int(resp.ContentLength))
-        bar.SetMaxWidth(80)
-        writer := bar.NewProxyWriter(file)
-
-        _, err = io.Copy(writer, resp.Body)
-        if err != nil {
-            panic(err)
-        }
-
-        bar.Finish()
-
-        fmt.Printf("Downloaded server jar for version '%s' to '%s'.\n", version, jarFilePath)
     },
 }
 
 func init() {
     getCmd.Flags().StringP("output", "o", ".", "Output path to save the server jar")
+    getCmd.Flags().StringP("loader", "l", "vanilla", "Set the desired server software")
     rootCmd.AddCommand(getCmd)
 }
