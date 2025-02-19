@@ -5,6 +5,7 @@ import (
     "github.com/JaegyuDev/piston/internal/caffine"
     "github.com/spf13/cobra"
     "os"
+    "path"
 )
 
 var getCmd = &cobra.Command{
@@ -35,7 +36,7 @@ If no path is given, the jar will be downloaded to the current directory.`,
             fmt.Println("Error getting output path: ", err)
             os.Exit(1)
         }
-        downloader.Path(outputPath)
+        downloader.Path(path.Join(outputPath, "server.jar"))
 
         doSnapshots, err := cmd.Flags().GetBool("allow-snapshots")
         if err != nil {
