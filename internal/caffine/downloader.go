@@ -24,6 +24,8 @@ func GetLoader(name string) (Downloader, error) {
         return &downloader, nil
     case "fabric":
         return &download.FabricMC{}, nil
+    case "neoforge":
+        return &download.NeoForge{}, nil
 
     default:
         return nil, fmt.Errorf("no loader found for version '%s'", name)
