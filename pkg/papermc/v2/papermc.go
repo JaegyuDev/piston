@@ -1,9 +1,12 @@
 package v2
 
-import "net/http"
+import (
+    "fmt"
+    "net/http"
+)
 
 const (
-    ApiUrl = "https://api.papermc.io/v2"
+    DefaultBaseUrl = "https://api.papermc.io/v2"
 )
 
 type ProjectId string
@@ -24,7 +27,18 @@ type Config struct {
 // NewConfig returns a default client to use with the API.
 func NewConfig() *Config {
     return &Config{
-        BaseUrl: "https://api.papermc.io/v2",
+        BaseUrl: DefaultBaseUrl,
         Client:  http.DefaultClient,
     }
+}
+
+// GetDownloadUrl returns the URL to download the server jar.
+func (c *Config) GetDownloadUrl(id ProjectId, version string, build int32, download string) string {
+    return fmt.Sprintf("%s/projects/%s/versions/%s/builds/%d/downloads/%s",
+        c.BaseUrl,
+        id,
+        version,
+        build,
+        download,
+    )
 }
